@@ -12,7 +12,7 @@ import (
 )
 
 //	POST /guest_list/name
-func CreateGuest (w http.ResponseWriter, r *http.Request)  {
+func CreateGuest(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(r.URL.String(), "/")
 	bodyBytes, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -31,9 +31,9 @@ func CreateGuest (w http.ResponseWriter, r *http.Request)  {
 		return
 	}
 	var guest Guest.Guest
-	err = json.Unmarshal(bodyBytes,&guest)
+	err = json.Unmarshal(bodyBytes, &guest)
 	if err != nil {
-		w.Write([]byte(fmt.Sprintf("Could read the input body due to %s",err.Error())))
+		w.Write([]byte(fmt.Sprintf("Could read the input body due to %s", err.Error())))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -48,10 +48,10 @@ func CreateGuest (w http.ResponseWriter, r *http.Request)  {
 }
 
 //	GET /guest_list
-func ShowGuest(w http.ResponseWriter, r *http.Request)  {
+func ShowGuest(w http.ResponseWriter, r *http.Request) {
 	guests, err := Guest.Guestlist()
 	if err != nil {
-		w.Write([]byte(fmt.Sprintf("Failed to pull the records due to %s",err.Error())))
+		w.Write([]byte(fmt.Sprintf("Failed to pull the records due to %s", err.Error())))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -59,7 +59,7 @@ func ShowGuest(w http.ResponseWriter, r *http.Request)  {
 	guestlist["guests"] = guests
 	jsonBytes, err := json.Marshal(guestlist)
 	if err != nil {
-		w.Write([]byte(fmt.Sprintf("Failed to pull the records due to %s",err.Error())))
+		w.Write([]byte(fmt.Sprintf("Failed to pull the records due to %s", err.Error())))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -70,6 +70,7 @@ func ShowGuest(w http.ResponseWriter, r *http.Request)  {
 
 // PUT /guests/name
 func CreateGuestLog(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.URL.EscapedPath())
 	parts := strings.Split(r.URL.String(), "/")
 	bodyBytes, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -87,7 +88,7 @@ func CreateGuestLog(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	name := parts[2]
+	name := strings.Replace(parts[2], "%20", " ", -1)
 	if isValidGuest(name) == false {
 		w.Write([]byte("Invalid guest"))
 		w.WriteHeader(http.StatusBadRequest)
@@ -95,13 +96,13 @@ func CreateGuestLog(w http.ResponseWriter, r *http.Request) {
 	}
 	accompanyingGuests := make(map[string]int)
 	aguestKey := "accompanying_guests"
-	err = json.Unmarshal(bodyBytes,&accompanyingGuests)
+	err = json.Unmarshal(bodyBytes, &accompanyingGuests)
 	if err != nil {
-		w.Write([]byte(fmt.Sprintf("Could read the input body due to %s",err.Error())))
+		w.Write([]byte(fmt.Sprintf("Could read the input body due to %s", err.Error())))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	guest,err := getGuestDetails(name)
+	guest, err := getGuestDetails(name)
 	checkForErrorAndPanic(err)
 	allowedCount, err := isGuestCountAcceptable(accompanyingGuests[aguestKey], guest)
 	checkForErrorAndPanic(err)
@@ -137,7 +138,8 @@ func DeleteGuestLog(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	name := parts[2]
+	//	For now handing the space by simply replacing the %20 with whitespace. But we can create a method to sanitise the input.
+	name := strings.Replace(parts[2], "%20", " ", -1)
 	err := GuestLog.Delete(name)
 	checkForErrorAndPanic(err)
 	w.WriteHeader(http.StatusOK)
@@ -152,7 +154,7 @@ func GetCapacity(w http.ResponseWriter, r *http.Request) {
 	checkForErrorAndPanic(err)
 	presentGuestCount := 0
 	for idx := range guests {
-		presentGuestCount += guests[idx].AccompanyingGuests +1
+		presentGuestCount += guests[idx].AccompanyingGuests + 1
 	}
 	venueCapacity, err := TableController.GetCapacity()
 	checkForErrorAndPanic(err)
@@ -162,22 +164,22 @@ func GetCapacity(w http.ResponseWriter, r *http.Request) {
 	jsonBytes, err := json.Marshal(emptyseat)
 	checkForErrorAndPanic(err)
 	w.Write(jsonBytes)
-	w.Header().Add("content-type","application/json")
+	w.Header().Add("content-type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	return
 }
 
-func GetDetailsForGuest(name string) (Guest.Guest,error) {
+func GetDetailsForGuest(name string) (Guest.Guest, error) {
 	return getGuestDetails(name)
 }
 
-func getGuestDetails(name string) (Guest.Guest,error) {
+func getGuestDetails(name string) (Guest.Guest, error) {
 	return Guest.GetGuestDetails(name)
 }
 
-func isGuestCountAcceptable(guestCount int, guest Guest.Guest) (int,error) {
+func isGuestCountAcceptable(guestCount int, guest Guest.Guest) (int, error) {
 	if guestCount <= guest.AccompanyingGuests {
-		return guestCount,nil
+		return guestCount, nil
 	}
 	//	Check against the table capacity
 	tableCapacity, err := TableController.GetTableCapacity(guest.Table)
@@ -185,7 +187,7 @@ func isGuestCountAcceptable(guestCount int, guest Guest.Guest) (int,error) {
 		panic(err.Error())
 	}
 	if tableCapacity >= guestCount {
-		return guestCount,nil
+		return guestCount, nil
 	}
 	return 0, nil
 }

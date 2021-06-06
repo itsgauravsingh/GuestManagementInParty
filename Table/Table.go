@@ -4,7 +4,7 @@ import "database/sql"
 
 const (
 	DB_TABLE = "TableInfo"
-	DB_NAME = "partydb"
+	DB_NAME  = "partydb"
 )
 
 type Table struct {
@@ -14,8 +14,8 @@ type Table struct {
 	VenueID  int    `json:"venue_id,omitempty"`
 }
 
-func Create(id int, state string, capacity int, venueid int) error  {
-	db, err := sql.Open("mysql","root:bhaPP@123@tcp(127.0.0.1:3306)/"+DB_NAME)
+func Create(id int, state string, capacity int, venueid int) error {
+	db, err := sql.Open("mysql", "root:bhaPP@123@tcp(127.0.0.1:3306)/"+DB_NAME)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -25,10 +25,10 @@ func Create(id int, state string, capacity int, venueid int) error  {
 
 	//	Insert the new entry into the database
 	table := Table{
-		ID:id,State: state,Capacity: capacity,VenueID: venueid,
+		ID: id, State: state, Capacity: capacity, VenueID: venueid,
 	}
 
-	_ , err = db.Query("INSERT into "+DB_TABLE + "(id, state, capacity, venueid) VALUES (:id, :state, :capacity, :venueid)", table)
+	_, err = db.Query("INSERT into "+DB_TABLE+"(id, state, capacity, venueid) VALUES (:id, :state, :capacity, :venueid)", table)
 	if err != nil {
 		return err
 	}
@@ -36,18 +36,18 @@ func Create(id int, state string, capacity int, venueid int) error  {
 }
 
 func Update() {
-
+	// ToDo
 }
 
 func GetCapacity() (int, error) {
-	db, err := sql.Open("mysql","root:bhaPP@123@tcp(127.0.0.1:3306)/"+DB_NAME)
+	db, err := sql.Open("mysql", "root:bhaPP@123@tcp(127.0.0.1:3306)/"+DB_NAME)
 	if err != nil {
 		panic(err.Error())
 	}
 	//	we need to close the db handle
 	defer db.Close()
 
-	results, err := db.Query("SELECT SUM(capacity) FROM "+DB_TABLE)
+	results, err := db.Query("SELECT SUM(capacity) FROM " + DB_TABLE)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -61,14 +61,14 @@ func GetCapacity() (int, error) {
 	return capacity, nil
 }
 
-func GetCapacityByTable(table int)  (int, error) {
-	db, err := sql.Open("mysql","root:bhaPP@123@tcp(127.0.0.1:3306)/"+DB_NAME)
+func GetCapacityByTable(table int) (int, error) {
+	db, err := sql.Open("mysql", "root:bhaPP@123@tcp(127.0.0.1:3306)/"+DB_NAME)
 	if err != nil {
 		panic(err.Error())
 	}
 	//	we need to close the db handle
 	defer db.Close()
-	results, err := db.Query("SELECT capactiy FROM "+DB_TABLE+" WHERE id = ?",table)
+	results, err := db.Query("SELECT capactiy FROM "+DB_TABLE+" WHERE id = ?", table)
 	if err != nil {
 		panic(err.Error())
 	}
