@@ -1,3 +1,7 @@
+/*
+*	Controller will handle the routing of valid request to specific controller and discard the invalid requests
+ */
+
 package Controller
 
 import (
@@ -8,13 +12,14 @@ import (
 func GuestlistHandle(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		GuestController.ShowGuest(w,r)
+		GuestController.ShowGuest(w, r)
 		return
 	case "POST":
-		GuestController.CreateGuest(w,r)
+		GuestController.CreateGuest(w, r)
+		return
 	default:
+		_, _ = w.Write([]byte("method not allowed"))
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write([]byte("method not allowed"))
 		return
 	}
 }
@@ -22,17 +27,17 @@ func GuestlistHandle(w http.ResponseWriter, r *http.Request) {
 func GuestLogHandle(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		GuestController.ShowGuestLog(w,r)
+		GuestController.ShowGuestLog(w, r)
 		return
 	case "PUT":
-		GuestController.CreateGuestLog(w,r)
+		GuestController.CreateGuestLog(w, r)
 		return
 	case "DELETE":
-		GuestController.DeleteGuestLog(w,r)
+		GuestController.DeleteGuestLog(w, r)
 		return
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write([]byte("method not allowed"))
+		_, _ = w.Write([]byte("method not allowed"))
 		return
 	}
 }
@@ -40,13 +45,11 @@ func GuestLogHandle(w http.ResponseWriter, r *http.Request) {
 func SeatHandle(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		GuestController.GetCapacity(w,r)
+		GuestController.GetCapacity(w, r)
 		return
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write([]byte("method not allowed"))
+		_, _ = w.Write([]byte("method not allowed"))
 		return
 	}
 }
-
-

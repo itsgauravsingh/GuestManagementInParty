@@ -1,3 +1,7 @@
+/*
+*	This is the entry point of the service
+ */
+
 package main
 
 func main() {

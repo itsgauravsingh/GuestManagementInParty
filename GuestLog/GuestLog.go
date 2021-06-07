@@ -2,12 +2,12 @@ package GuestLog
 
 import (
 	"basicServer/Guest"
+	"basicServer/constants"
 	"database/sql"
 	"time"
 )
 
 const (
-	DB_NAME  = "partydb"
 	DB_TABLE = "GuestLog"
 )
 
@@ -26,9 +26,25 @@ type AbstractGuestLog struct {
 	TimeArrived        string `json:"time_arrived"`
 }
 
+/*
+*	CreateNew(guest Guest.Guest) error
+*	Input params
+*	@guest	:	guest details wrapped in a Guest struct
+*	Output params
+*	@error	:	error in case of any failure else nil.
+*
+*	Flow
+*	1.	Create a DB connection and defer the call to close the connection
+*	2.	Check if entry for this guest is already present. If no, create and entry for this and return
+*	3.	If the entry is already present, update the record
+*	4.	In case of any error, return error
+*	5.	In case of success, return nil
+*
+ */
+
 func CreateNew(guest Guest.Guest) error {
 	//	ToDO
-	db, err := sql.Open("mysql", "root:bhaPP@123@tcp(127.0.0.1:3306)/"+DB_NAME)
+	db, err := sql.Open("mysql", constants.DB_USER+":"+constants.DB_PASSWORD+"@tcp("+constants.DB_HOSTIP+":"+constants.DB_PORT+")/"+constants.DB_NAME)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -55,8 +71,23 @@ func CreateNew(guest Guest.Guest) error {
 	return nil
 }
 
+/*
+*	ShowGuestLog() ([]AbstractGuestLog, error)
+*	Input params
+*	Output params
+*	@[]AbstractGuest	:	guest list wrapped in AbstractGuest containing all the relevant details only
+*	@error	:	error in case of any failure else nil.
+*
+*	Flow
+*	1.	Create a DB connection and defer the call to close the connection
+*	2.	Using the db handle run select query to get all the records where ispresent is set to 1 (indicating the present of guest) but only desired fields from GuestLog table
+*	3.	In case of any error, return (empty slice of AbstractGuest,error)
+*	4.	In case of success, return (valid slice of AbstractGuest, nil)
+*
+ */
+
 func ShowGuestLog() ([]AbstractGuestLog, error) {
-	db, err := sql.Open("mysql", "root:bhaPP@123@tcp(127.0.0.1:3306)/"+DB_NAME)
+	db, err := sql.Open("mysql", constants.DB_USER+":"+constants.DB_PASSWORD+"@tcp("+constants.DB_HOSTIP+":"+constants.DB_PORT+")/"+constants.DB_NAME)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -79,8 +110,23 @@ func ShowGuestLog() ([]AbstractGuestLog, error) {
 	return guests, nil
 }
 
+/*
+*	Delete(name string) error
+*	Input params
+*	@name	:	string value depicting name of a guest to be deleted
+*	Output params
+*	@error	:	error in case of any failure else nil.
+*
+*	Flow
+*	1.	Create a DB connection and defer the call to close the connection
+*	2.	Update the ispresent flag, and time_departed for the guest in the GuestLog table. Marking the guest as departed
+*	3.	In case of any error, return error
+*	4.	In case of success, return nil
+*
+ */
+
 func Delete(name string) error {
-	db, err := sql.Open("mysql", "root:bhaPP@123@tcp(127.0.0.1:3306)/"+DB_NAME)
+	db, err := sql.Open("mysql", constants.DB_USER+":"+constants.DB_PASSWORD+"@tcp("+constants.DB_HOSTIP+":"+constants.DB_PORT+")/"+constants.DB_NAME)
 	if err != nil {
 		panic(err.Error())
 	}

@@ -1,11 +1,18 @@
 package Table
 
-import "database/sql"
+import (
+	"basicServer/constants"
+	"database/sql"
+)
 
 const (
 	DB_TABLE = "TableInfo"
-	DB_NAME  = "partydb"
 )
+
+/*
+*	Struct : Table
+*	To model the TableInfo entity
+ */
 
 type Table struct {
 	ID       int    `json:"id,omitempty"`
@@ -14,14 +21,27 @@ type Table struct {
 	VenueID  int    `json:"venue_id,omitempty"`
 }
 
+/*
+**	Creates and inserts a table record to TableInfo table
+**	Input Params
+**	@id : integer type value to be used as table identifier
+**	@state : string type value to depict the current state of the table. Total states can be 1. available, 2. occupied, 3. broken
+**	@capacity : integer type value to depict the capacity i.e. how many members can this table accommodate
+**	@venueid : integer type value to associate each table to a specific venue
+**	Return Param
+**	@error : returns error if there is any else returns nil
+**
+**	This Method is based on the following understanding
+**
+ */
+
 func Create(id int, state string, capacity int, venueid int) error {
-	db, err := sql.Open("mysql", "root:bhaPP@123@tcp(127.0.0.1:3306)/"+DB_NAME)
+	db, err := sql.Open("mysql", constants.DB_USER+":"+constants.DB_PASSWORD+"@tcp("+constants.DB_HOSTIP+":"+constants.DB_PORT+")/"+constants.DB_NAME)
 	if err != nil {
 		panic(err.Error())
 	}
 	//	we need to close the db handle
 	defer db.Close()
-	//	Check if table exists
 
 	//	Insert the new entry into the database
 	table := Table{
@@ -40,7 +60,7 @@ func Update() {
 }
 
 func GetCapacity() (int, error) {
-	db, err := sql.Open("mysql", "root:bhaPP@123@tcp(127.0.0.1:3306)/"+DB_NAME)
+	db, err := sql.Open("mysql", constants.DB_USER+":"+constants.DB_PASSWORD+"@tcp("+constants.DB_HOSTIP+":"+constants.DB_PORT+")/"+constants.DB_NAME)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -62,7 +82,7 @@ func GetCapacity() (int, error) {
 }
 
 func GetCapacityByTable(table int) (int, error) {
-	db, err := sql.Open("mysql", "root:bhaPP@123@tcp(127.0.0.1:3306)/"+DB_NAME)
+	db, err := sql.Open("mysql", constants.DB_USER+":"+constants.DB_PASSWORD+"@tcp("+constants.DB_HOSTIP+":"+constants.DB_PORT+")/"+constants.DB_NAME)
 	if err != nil {
 		panic(err.Error())
 	}
