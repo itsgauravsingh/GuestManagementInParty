@@ -53,4 +53,10 @@
     - No implementation to add/remove TableInfo entries. That can be added using mysql server separately
     - Any standard patterns to keep code extensible.
     - Users scenario to handle admin, guests, venue manager etc.
+
+##ASSUMPTIONS
+1. All the guests added to the guestlist contains a unique name
+2. Party is hosted at single venue
+3. The Guest will not come again after leaving from the party
+4. Tables are already created before starting the use of the service
     
