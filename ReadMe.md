@@ -59,4 +59,14 @@
 2. Party is hosted at single venue
 3. The Guest will not come again after leaving from the party
 4. Tables are already created before starting the use of the service
+
+
+##SETUP
+1. Install golang on the machine
+2. Download/clone this project to the _/go/src_ 
+3. Install mysql 5.7.x on the local machine to setup db server (Ignore this step if you are planning to place the DB on the cloud)
+4. Change the default params used in the project (present inside _/basicServer/constants/global-constants.go_)
+5. Do change the project directory name from _GuestManagementInParty_ to _basicServer_ (This was the project and module name used at the time of project creation. OR update the module references along with the module name to _GuestManagementInParty_.
+6. Run Build command and its done.
+7. You can query at localhost:8080/ to access the APIs (OR change the configuration if hosting the code on application server)
     
